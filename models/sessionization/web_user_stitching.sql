@@ -2,7 +2,7 @@
 
 with events as (
 
-    select * from {{ref('segment_web_page_views')}}
+    select * from {{ref('web_page_views')}}
 
 ),
 

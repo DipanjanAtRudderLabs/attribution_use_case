@@ -37,21 +37,21 @@
     'page_url_query' : 'last_page_url_query'
     } %}
 
-{% for col in var('segment_pass_through_columns') %}
+{% for col in var('pass_through_columns') %}
     {% do first_values.update({col: 'first_' ~ col}) %}
     {% do last_values.update({col: 'last_' ~ col}) %}
 {% endfor %}
 
 with pageviews_sessionized as (
 
-    select * from {{ref('segment_web_page_views__sessionized')}}
+    select * from {{ref('web_page_views__sessionized')}}
 
     {% if is_incremental() %}
         where cast(tstamp as datetime) > (
           select
             {{ dbt_utils.dateadd(
                 'hour',
-                -var('segment_sessionization_trailing_window'),
+                -var('sessionization_trailing_window'),
                 'max(session_start_tstamp)'
             ) }}
           from {{ this }})

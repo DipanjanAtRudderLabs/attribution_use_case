@@ -9,7 +9,7 @@
 
 with source as (
 
-    select * from {{ref('segment_web_sessions')}}
+    select * from {{ref('web_sessions')}}
 
 )
 

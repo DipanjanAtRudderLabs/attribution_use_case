@@ -8,14 +8,14 @@
 
 with sessions as (
 
-    select * from {{ref('segment_web_sessions__initial')}}
+    select * from {{ref('web_sessions__initial')}}
 
     {% if is_incremental() %}
         where cast(session_start_tstamp as datetime) > (
           select
             {{ dbt_utils.dateadd(
                 'hour',
-                -var('segment_sessionization_trailing_window'),
+                -var('sessionization_trailing_window'),
                 'max(session_start_tstamp)'
             ) }}
           from {{ this }})
@@ -25,7 +25,7 @@ with sessions as (
 
 id_stitching as (
 
-    select * from {{ref('segment_web_user_stitching')}}
+    select * from {{ref('web_user_stitching')}}
 
 ),
 

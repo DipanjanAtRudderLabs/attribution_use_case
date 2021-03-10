@@ -11,7 +11,7 @@
     select
         {{ dbt_utils.dateadd(
             'hour',
-            -var('segment_sessionization_trailing_window'),
+            -var('sessionization_trailing_window'),
             'max(session_start_tstamp)'
         ) }}
     from {{this}}
@@ -28,7 +28,7 @@ more complicated, the performance tradeoff is worth it.
 
 with sessions as (
 
-    select * from {{ref('segment_web_sessions__stitched')}}
+    select * from {{ref('web_sessions__stitched')}}
 
     {% if is_incremental() %}
     where cast(session_start_tstamp as datetime) > {{sessionization_cutoff}}

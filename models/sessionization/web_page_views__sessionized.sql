@@ -16,17 +16,17 @@ events we need to calculate.
 
 with pageviews as (
 
-    select * from {{ref('segment_web_page_views')}}
+    select * from {{ref('web_page_views')}}
 
     {% if is_incremental() %}
     where anonymous_id in (
         select distinct anonymous_id
-        from {{ref('segment_web_page_views')}}
+        from {{ref('web_page_views')}}
         where cast(tstamp as datetime) >= (
           select
             {{ dbt_utils.dateadd(
                 'hour',
-                -var('segment_sessionization_trailing_window'),
+                -var('sessionization_trailing_window'),
                 'max(tstamp)'
             ) }}
           from {{ this }})
@@ -94,7 +94,7 @@ new_sessions as (
     select
         *,
         case
-            when period_of_inactivity <= {{var('segment_inactivity_cutoff')}} then 0
+            when period_of_inactivity <= {{var('inactivity_cutoff')}} then 0
             else 1
         end as new_session
     from diffed
@@ -128,7 +128,7 @@ session_ids as (
 
     select
 
-        {{dbt_utils.star(ref('segment_web_page_views'))}},
+        {{dbt_utils.star(ref('web_page_views'))}},
         page_view_number,
         {{dbt_utils.surrogate_key(['anonymous_id', 'session_number'])}} as session_id
 
